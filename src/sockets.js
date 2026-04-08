@@ -8,8 +8,13 @@ module.exports = function (io) {
     io.on('connection', async socket => {
         console.log("Nuevo usuario conectado");
         
-        let messages = await Chat.find({}). limit(8);
-       socket.emit('cargando mensajes viejos',messages);
+        // Carga los ÚLTIMOS 8 mensajes, ordenados por fecha ascendente para mostrar el historial correctamente
+        const messages = await Chat.find({})
+            .sort({ created_at: -1 })
+            .limit(8);
+        
+        // Invertimos el array para que se muestren en orden cronológico (del más viejo al más nuevo de los últimos 8)
+        socket.emit('cargando mensajes viejos', messages.reverse());
         
         
         socket.on('Nuevo usuario', (data, cb) => {

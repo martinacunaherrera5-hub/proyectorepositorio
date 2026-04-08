@@ -46,19 +46,14 @@ $(function() {
     });
 
     socket.on('Nuevo mensaje', data => {
-        if (data.activo)  {
-            $chat.append(`<div class="mb-1"><b>${data.nick}:</b> ${data.msg}</div>`);
-        }else{
-            $chat.append(`<div class="mb-1"><b>${data.nick}:</b> ${data.msg}</div>`);
-        }
-        $chat.scrollTop($chat[0].scrollHeight);
+        displayMsg(data);
     });
 
-     socket.on('whisper', data => {
-        const whisperHeader = data.to ? `Para ${data.to}` :   `DE ${data.nick}`
-        $chat.append (`<div class = "mb-1 whisper"><b>${whisperHeader}:</b> ${data.msg}</div>`)
-         $chat.scrollTop($chat[0].scrollHeight);
-         })
+    socket.on('whisper', data => {
+        const whisperHeader = data.to ? `Para ${data.to}` : `DE ${data.nick}`;
+        $chat.append(`<div class="mb-1 whisper"><b>${whisperHeader}:</b> ${data.msg}</div>`);
+        $chat.scrollTop($chat[0].scrollHeight);
+    });
 
     // Update user list
     socket.on('usernames', data => {
@@ -71,12 +66,14 @@ $(function() {
     });
 
     socket.on('cargando mensajes viejos', msgs => {
-        for (let i = 0; i < msgs.length; i ++ ) {
-            displayMsg(msgs[i]);
-        }
-    })
+        msgs.forEach(msg => {
+            displayMsg(msg);
+        });
+    });
+
     function displayMsg(data) {
-        $chat.append(`<p><b> ${data.nick}: </b> ${data.msg}</p>`);
+        $chat.append(`<div class="mb-1"><b>${data.nick}:</b> ${data.msg}</div>`);
+        $chat.scrollTop($chat[0].scrollHeight);
     }
 
 });

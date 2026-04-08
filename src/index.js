@@ -12,10 +12,14 @@ const io = socketio(server);
 app.set('port', process.env.PORT || 8080);
 
 // Base de Datos
-const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1/chat-database';
+const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/chat-database';
 mongoose.connect(dbURI)
-    .then(db => console.log('Base de datos conectada'))
-    .catch(error => console.log('Error en DB:', error));
+    .then(() => console.log('>>> Base de datos conectada correctamente a:', dbURI))
+    .catch(error => {
+        console.error('*** ERROR EN CONEXIÓN DB ***');
+        console.error('Mensaje:', error.message);
+        console.error('Asegúrate de que MongoDB esté corriendo localmente.');
+    });
 
 // Sockets
 require("./sockets")(io);
