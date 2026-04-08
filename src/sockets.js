@@ -39,7 +39,7 @@ module.exports = function (io) {
             });
         });
 
-        socket.on('Enviar mensaje', function(data, cb) {
+        socket.on('Enviar mensaje', async (data, cb) => {
             let msg = data.trim();
 
             // LÓGICA DE MENSAJE PRIVADO
@@ -73,6 +73,14 @@ module.exports = function (io) {
             // LÓGICA DE MENSAJE GLOBAL
             else {
                 if (!socket.nickname) return;
+
+                // GUARDAR EN BASE DE DATOS
+                const nuevoMensaje = new Chat({
+                    msg: data,
+                    nick: socket.nickname
+                });
+                await nuevoMensaje.save();
+
                 io.sockets.emit('Nuevo mensaje', {
                     msg: data,
                     nick: socket.nickname
